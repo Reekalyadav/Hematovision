@@ -5,9 +5,8 @@ import numpy as np
 import os
 
 app = Flask(__name__)
-
-# Model ka path check karein
-MODEL_PATH = r'D:\Hematovision\blood_cell_model.h5'
+# Render ke liye simple path use karein
+model = load_model('blood_cell_model.h5')'
 model = tf.keras.models.load_model(MODEL_PATH)
 
 # Labels bilkul wahi jo training mein the
@@ -49,3 +48,4 @@ def predict():
 if __name__ == "__main__":
     # Render automatically port assign karta hai, 10000 default hota hai
     app.run(host='0.0.0.0', port=10000)
+
