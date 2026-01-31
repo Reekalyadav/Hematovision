@@ -6,17 +6,18 @@
         body { font-family: 'Segoe UI', Arial, sans-serif; background-color: #f8f9fa; margin: 0; display: flex; justify-content: center; align-items: center; min-height: 100vh; }
         .container { background: white; width: 90%; max-width: 800px; border-radius: 10px; box-shadow: 0 4px 20px rgba(0,0,0,0.1); padding: 20px; text-align: center; }
         .header { background-color: #e74c3c; color: white; padding: 15px; font-size: 26px; font-weight: bold; border-radius: 5px; margin-bottom: 20px; }
-        .result-img { max-width: 400px; border-radius: 15px; margin: 20px 0; border: 5px solid #fff; box-shadow: 0 0 10px rgba(0,0,0,0.2); }
-        .class-text { font-size: 20px; margin-bottom: 20px; }
+        .class-text { font-size: 22px; margin-bottom: 10px; color: #2c3e50; }
+        .confidence-text { font-size: 18px; color: #27ae60; font-weight: bold; margin-bottom: 20px; }
         .btn-back { background-color: #e74c3c; color: white; text-decoration: none; padding: 12px 40px; border-radius: 5px; display: inline-block; width: 80%; font-size: 18px; margin-top: 20px; }
     </style>
 </head>
 <body>
     <div class="container">
         <div class="header">Prediction Result</div>
+        
         <div class="class-text"><strong>Predicted Class:</strong> {{ prediction }}</div>
         
-        <img src="{{ url_for('static', filename=user_image) }}" class="result-img">
+        <div class="confidence-text">Confidence Level: {{ confidence }}%</div>
         
         <br>
         <a href="/" class="btn-back">Upload Another Image</a>
