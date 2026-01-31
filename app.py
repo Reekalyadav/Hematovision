@@ -46,6 +46,6 @@ def predict():
                                  confidence=confidence,
                                  user_image=img_file.filename)
     return render_template('index.html')
-
-if __name__ == '__main__':
-    app.run(debug=True)
+if __name__ == "__main__":
+    # Render automatically port assign karta hai, 10000 default hota hai
+    app.run(host='0.0.0.0', port=10000)
