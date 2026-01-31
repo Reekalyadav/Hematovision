@@ -44,8 +44,9 @@ def upload():
         confidence = round(100 * np.max(preds), 2)
 
         return render_template('result.html', prediction=pred_class, confidence=confidence)
-    return None
+    return redirect('/')
 
 if __name__ == '__main__':
     # Render ke liye port aur host configuration
     app.run(host='0.0.0.0', port=10000)
+
