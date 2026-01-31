@@ -1,6 +1,7 @@
 from flask import Flask, render_template, request
 import tensorflow as tf
 from tensorflow.keras.preprocessing import image
+from tensorflow.keras.models import load_model
 import numpy as np
 import os
 
@@ -48,5 +49,6 @@ def predict():
 if __name__ == "__main__":
     # Render automatically port assign karta hai, 10000 default hota hai
     app.run(host='0.0.0.0', port=10000)
+
 
 
