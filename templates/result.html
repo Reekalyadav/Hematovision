@@ -8,7 +8,19 @@
         .header { background-color: #e74c3c; color: white; padding: 15px; font-size: 26px; font-weight: bold; border-radius: 5px; margin-bottom: 20px; }
         .class-text { font-size: 22px; margin-bottom: 10px; color: #2c3e50; }
         .confidence-text { font-size: 18px; color: #27ae60; font-weight: bold; margin-bottom: 20px; }
+        
+        /* Image ko sundar dikhane ke liye styling */
+        .result-img { 
+            max-width: 300px; 
+            height: auto; 
+            border-radius: 10px; 
+            margin: 20px 0; 
+            box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+            border: 3px solid #e74c3c;
+        }
+
         .btn-back { background-color: #e74c3c; color: white; text-decoration: none; padding: 12px 40px; border-radius: 5px; display: inline-block; width: 80%; font-size: 18px; margin-top: 20px; }
+        .btn-back:hover { background-color: #c0392b; }
     </style>
 </head>
 <body>
@@ -18,6 +30,10 @@
         <div class="class-text"><strong>Predicted Class:</strong> {{ prediction }}</div>
         
         <div class="confidence-text">Confidence Level: {{ confidence }}%</div>
+        
+        {% if user_image %}
+            <img src="data:image/jpeg;base64,{{ user_image }}" class="result-img" alt="Uploaded Blood Cell">
+        {% endif %}
         
         <br>
         <a href="/" class="btn-back">Upload Another Image</a>
