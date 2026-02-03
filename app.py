@@ -47,16 +47,16 @@ def upload():
         f.save(file_path)
 
         # 2. COLOR VALIDATION (Rejecting Non-Medical Photos)
-        # Blood cells typically have Purple/Pink stains
         img_check = Image.open(file_path)
         stat = ImageStat.Stat(img_check)
         r, g, b = stat.mean[:3]
         
-        # Logic: Agar Green channel Red se bada hai, ya photo Gray/Natural hai, toh reject karein
-        if g > r or (abs(r - b) < 15 and abs(r - g) < 15):
+        # Sahi Indentation (4 spaces/1 tab andar)
+        if g > r or r < 100 or b < 100:
             if os.path.exists(file_path):
                 os.remove(file_path)
-            return render_template('index.html', error="Error: Invalid image. Please upload a stained microscopic blood cell slide.")
+            # Yeh message user ko index.html par dikhega
+            return render_template('index.html', error="Invalid image. Please upload a stained microscopic blood cell slide.")
 
         # 3. Prediction Process (Agar color check pass hua)
         my_model = get_model()
@@ -90,3 +90,4 @@ def upload():
 if __name__ == '__main__':
     port = int(os.environ.get('PORT', 10000))
     app.run(host='0.0.0.0', port=port)
+
