@@ -7,21 +7,20 @@ import os
 import gc
 import base64
 from io import BytesIO
+from PIL import Image, ImageStat # Naya: Color check ke liye
 
 app = Flask(__name__)
 
-# --- Model Loading Logic (Memory Bachane ke liye) ---
+# --- Model Loading Logic ---
 model = None
 
 def get_model():
     global model
     if model is None:
-        # Jab pehli prediction aayegi, tabhi model load hoga
         MODEL_PATH = 'blood_cell_model.h5'
         model = load_model(MODEL_PATH)
     return model
 
-# Aapki classes ke naam
 classes = ['Basophil', 'Eosinophil', 'Lymphocyte', 'Monocyte', 'Neutrophil']
 
 @app.route('/', methods=['GET'])
@@ -38,7 +37,7 @@ def upload():
         if f.filename == '':
             return redirect(request.url)
 
-        # 1. Temporary folder setup
+        # 1. Image Save and Load
         basepath = os.path.dirname(__file__)
         upload_path = os.path.join(basepath, 'uploads')
         if not os.path.exists(upload_path):
@@ -47,7 +46,19 @@ def upload():
         file_path = os.path.join(upload_path, f.filename)
         f.save(file_path)
 
-        # 2. Prediction Process
+        # 2. COLOR VALIDATION (Rejecting Non-Medical Photos)
+        # Blood cells typically have Purple/Pink stains
+        img_check = Image.open(file_path)
+        stat = ImageStat.Stat(img_check)
+        r, g, b = stat.mean[:3]
+        
+        # Logic: Agar Green channel Red se bada hai, ya photo Gray/Natural hai, toh reject karein
+        if g > r or (abs(r - b) < 15 and abs(r - g) < 15):
+            if os.path.exists(file_path):
+                os.remove(file_path)
+            return render_template('index.html', error="Error: Invalid image. Please upload a stained microscopic blood cell slide.")
+
+        # 3. Prediction Process (Agar color check pass hua)
         my_model = get_model()
         img = image.load_img(file_path, target_size=(224, 224))
         x = image.img_to_array(img)
@@ -58,15 +69,15 @@ def upload():
         pred_class = classes[np.argmax(preds)]
         confidence = round(100 * np.max(preds), 2)
 
-        # 3. Image ko Base64 mein badalna (Result page par dikhane ke liye)
+        # 4. Image to Base64 (UI ke liye)
         buffered = BytesIO()
         img.save(buffered, format="JPEG")
         img_str = base64.b64encode(buffered.getvalue()).decode()
 
-        # 4. Memory Cleaning
+        # 5. Cleanup
         del x
         if os.path.exists(file_path):
-            os.remove(file_path) # Temp file delete karna
+            os.remove(file_path)
         gc.collect()
 
         return render_template('result.html', 
@@ -77,6 +88,5 @@ def upload():
     return redirect(url_for('index'))
 
 if __name__ == '__main__':
-    # Render ke liye zaroori port configuration
     port = int(os.environ.get('PORT', 10000))
     app.run(host='0.0.0.0', port=port)
